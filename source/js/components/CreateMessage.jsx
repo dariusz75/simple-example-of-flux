@@ -1,9 +1,8 @@
 var React = require('react');
-var ButtonCreateMessage = require('./ButtonCreateMessage.jsx');
 var MessageActionCreators = require('../actions/MessageActionCreators');
 var MessageStore = require('../stores/MessageStore');
 
-var UpdateMessage = React.createClass({
+var CreateMessage = React.createClass({
 
   updateMessage: function () {
     var updatedMessage = this.refs.message.value;
@@ -15,7 +14,7 @@ var UpdateMessage = React.createClass({
     return (
       <div>
         <textarea className="form-control" rows="3" ref="message"></textarea>
-        <ButtonCreateMessage onClick={this.updateMessage} />
+        <ButtonCreateMessage onClick={this.createMessage} text='Create message' />
       </div>
     );
   }

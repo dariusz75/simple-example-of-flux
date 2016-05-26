@@ -15,7 +15,7 @@ var UpdateMessage = React.createClass({
     return (
       <div>
         <textarea className="form-control" rows="3" ref="message"></textarea>
-        <Button onClick={this.updateMessage} />
+        <Button onClick={this.updateMessage} text="Update message" />
       </div>
     );
   }

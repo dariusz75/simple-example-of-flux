@@ -30,7 +30,7 @@ var Application = React.createClass({
   render: function () {
     return <section className="container">
             <h1>{this.state.messageDocument.message ? this.state.messageDocument.message : 'Please wait... I am getting a message'}</h1>
-            <CreateMessage />
+            <UpdateMessage />
           </section>;
   }
 });

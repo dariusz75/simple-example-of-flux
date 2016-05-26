@@ -30441,7 +30441,7 @@ module.exports = {
   getAllMessages: getAllMessages
 };
 
-},{"../dispatcher/Dispatcher":189,"../services/api":190,"../stores/MessageStore":191}],183:[function(require,module,exports){
+},{"../dispatcher/Dispatcher":188,"../services/api":189,"../stores/MessageStore":190}],183:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Application = require('./components/Application.jsx');
@@ -30491,32 +30491,14 @@ var Application = React.createClass({
         null,
         this.state.messageDocument.message ? this.state.messageDocument.message : 'Please wait... I am getting a message'
       ),
-      React.createElement(CreateMessage, null)
+      React.createElement(UpdateMessage, null)
     );
   }
 });
 
 module.exports = Application;
 
-},{"../actions/MessageActionCreators":182,"../stores/MessageStore":191,"./CreateMessage.jsx":187,"./UpdateMessage.jsx":188,"react":172}],185:[function(require,module,exports){
-var React = require('react');
-var MessageActionCreators = require('../actions/MessageActionCreators');
-
-var Button = React.createClass({
-  displayName: 'Button',
-
-  render: function () {
-    return React.createElement(
-      'button',
-      { onClick: this.props.onClick, label: this.props.label, className: 'btn btn-success' },
-      'Update message'
-    );
-  }
-});
-
-module.exports = Button;
-
-},{"../actions/MessageActionCreators":182,"react":172}],186:[function(require,module,exports){
+},{"../actions/MessageActionCreators":182,"../stores/MessageStore":190,"./CreateMessage.jsx":186,"./UpdateMessage.jsx":187,"react":172}],185:[function(require,module,exports){
 var React = require('react');
 var MessageActionCreators = require('../actions/MessageActionCreators');
 
@@ -30527,21 +30509,20 @@ var Button = React.createClass({
     return React.createElement(
       'button',
       { onClick: this.props.onClick, className: 'btn btn-success' },
-      'Create message'
+      this.props.text
     );
   }
 });
 
 module.exports = Button;
 
-},{"../actions/MessageActionCreators":182,"react":172}],187:[function(require,module,exports){
+},{"../actions/MessageActionCreators":182,"react":172}],186:[function(require,module,exports){
 var React = require('react');
-var ButtonCreateMessage = require('./ButtonCreateMessage.jsx');
 var MessageActionCreators = require('../actions/MessageActionCreators');
 var MessageStore = require('../stores/MessageStore');
 
-var UpdateMessage = React.createClass({
-  displayName: 'UpdateMessage',
+var CreateMessage = React.createClass({
+  displayName: 'CreateMessage',
 
 
   updateMessage: function () {
@@ -30555,14 +30536,14 @@ var UpdateMessage = React.createClass({
       'div',
       null,
       React.createElement('textarea', { className: 'form-control', rows: '3', ref: 'message' }),
-      React.createElement(ButtonCreateMessage, { onClick: this.updateMessage })
+      React.createElement(ButtonCreateMessage, { onClick: this.createMessage, text: 'Create message' })
     );
   }
 });
 
 module.exports = CreateMessage;
 
-},{"../actions/MessageActionCreators":182,"../stores/MessageStore":191,"./ButtonCreateMessage.jsx":186,"react":172}],188:[function(require,module,exports){
+},{"../actions/MessageActionCreators":182,"../stores/MessageStore":190,"react":172}],187:[function(require,module,exports){
 var React = require('react');
 var Button = require('./Button.jsx');
 var MessageActionCreators = require('../actions/MessageActionCreators');
@@ -30583,19 +30564,19 @@ var UpdateMessage = React.createClass({
       'div',
       null,
       React.createElement('textarea', { className: 'form-control', rows: '3', ref: 'message' }),
-      React.createElement(Button, { onClick: this.updateMessage })
+      React.createElement(Button, { onClick: this.updateMessage, text: 'Update message' })
     );
   }
 });
 
 module.exports = UpdateMessage;
 
-},{"../actions/MessageActionCreators":182,"../stores/MessageStore":191,"./Button.jsx":185,"react":172}],189:[function(require,module,exports){
+},{"../actions/MessageActionCreators":182,"../stores/MessageStore":190,"./Button.jsx":185,"react":172}],188:[function(require,module,exports){
 var Dispatcher = require('flux').Dispatcher;
 
 module.exports = new Dispatcher();
 
-},{"flux":3}],190:[function(require,module,exports){
+},{"flux":3}],189:[function(require,module,exports){
 var jQuery = require('jquery');
 var shortid = require('shortid');
 
@@ -30735,7 +30716,7 @@ module.exports = {
 	readAllMessages: readAllMessages
 };
 
-},{"jquery":6,"shortid":173}],191:[function(require,module,exports){
+},{"jquery":6,"shortid":173}],190:[function(require,module,exports){
 var Dispatcher = require('../dispatcher/Dispatcher');
 var EventEmitter = require('events').EventEmitter;
 var objectAssign = require('object-assign');
@@ -30775,4 +30756,4 @@ Dispatcher.register(handleAction);
 
 module.exports = MessageStore;
 
-},{"../dispatcher/Dispatcher":189,"events":1,"object-assign":7}]},{},[183]);
+},{"../dispatcher/Dispatcher":188,"events":1,"object-assign":7}]},{},[183]);
