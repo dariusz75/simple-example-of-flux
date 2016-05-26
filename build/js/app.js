@@ -30404,41 +30404,62 @@ var Dispatcher = require('../dispatcher/Dispatcher');
 var ApiService = require('../services/api');
 var MessageStore = require('../stores/MessageStore');
 
+function createMessage(messageText) {
+
+	ApiService.createMessage(messageText, function callback(messageDocument) {
+
+		var action = {
+			type: 'update_message',
+			message: messageDocument
+		};
+
+		Dispatcher.dispatch(action);
+	});
+}
 function updateMessage(documentId, updatedMessageText) {
 
-  ApiService.updateMessage(documentId, updatedMessageText, function callback() {
+	ApiService.updateMessage(documentId, updatedMessageText, function callback() {
 
-    console.log('callback function called');
+		console.log('callback function called');
 
-    var messageDocument = MessageStore.getMessage();
-    messageDocument.message = updatedMessageText;
+		var messageDocument = MessageStore.getMessage();
+		messageDocument.message = updatedMessageText;
 
-    var action = {
-      type: 'update_message',
-      message: messageDocument
-    };
+		var action = {
+			type: 'update_message',
+			message: messageDocument
+		};
 
-    Dispatcher.dispatch(action);
-  });
+		Dispatcher.dispatch(action);
+	});
 }
 
 function getAllMessages() {
-  ApiService.readAllMessages(function handleData(messages) {
+	ApiService.readAllMessages(function handleData(messages) {
 
-    var latestMessage = messages[0];
+		var latestMessageDocument;
 
-    var action = {
-      type: 'update_message',
-      message: latestMessage
-    };
+		if (messages.length === 0) {
+			latestMessageDocument = {
+				message: ''
+			};
+		} else {
+			latestMessageDocument = messages[0];
+		}
 
-    Dispatcher.dispatch(action);
-  });
+		var action = {
+			type: 'update_message',
+			message: latestMessageDocument
+		};
+
+		Dispatcher.dispatch(action);
+	});
 }
 
 module.exports = {
-  updateMessage: updateMessage,
-  getAllMessages: getAllMessages
+	createMessage: createMessage,
+	updateMessage: updateMessage,
+	getAllMessages: getAllMessages
 };
 
 },{"../dispatcher/Dispatcher":188,"../services/api":189,"../stores/MessageStore":190}],183:[function(require,module,exports){
@@ -30462,12 +30483,14 @@ var Application = React.createClass({
 
 
   getInitialState: function () {
+    console.log(MessageStore.getMessage());
     return {
       messageDocument: MessageStore.getMessage()
     };
   },
 
   setMessage: function () {
+    console.log(MessageStore.getMessage());
     this.setState({
       messageDocument: MessageStore.getMessage()
     });
@@ -30483,6 +30506,13 @@ var Application = React.createClass({
   },
 
   render: function () {
+
+    if (this.state.messageDocument.message.length === 0) {
+      return React.createElement(CreateMessage, null);
+    }
+
+    return React.createElement(UpdateMessage, null);
+
     return React.createElement(
       'section',
       { className: 'container' },
@@ -30491,7 +30521,7 @@ var Application = React.createClass({
         null,
         this.state.messageDocument.message ? this.state.messageDocument.message : 'Please wait... I am getting a message'
       ),
-      React.createElement(UpdateMessage, null)
+      React.createElement(CreateMessage, null)
     );
   }
 });
@@ -30518,6 +30548,7 @@ module.exports = Button;
 
 },{"../actions/MessageActionCreators":182,"react":172}],186:[function(require,module,exports){
 var React = require('react');
+var Button = require('./Button.jsx');
 var MessageActionCreators = require('../actions/MessageActionCreators');
 var MessageStore = require('../stores/MessageStore');
 
@@ -30525,10 +30556,9 @@ var CreateMessage = React.createClass({
   displayName: 'CreateMessage',
 
 
-  updateMessage: function () {
+  createMessage: function () {
     var updatedMessage = this.refs.message.value;
-    var documentId = MessageStore.getMessage().id;
-    MessageActionCreators.updateMessage(documentId, updatedMessage);
+    MessageActionCreators.createMessage(updatedMessage);
   },
 
   render: function () {
@@ -30536,14 +30566,14 @@ var CreateMessage = React.createClass({
       'div',
       null,
       React.createElement('textarea', { className: 'form-control', rows: '3', ref: 'message' }),
-      React.createElement(ButtonCreateMessage, { onClick: this.createMessage, text: 'Create message' })
+      React.createElement(Button, { onClick: this.createMessage, text: 'Create message' })
     );
   }
 });
 
 module.exports = CreateMessage;
 
-},{"../actions/MessageActionCreators":182,"../stores/MessageStore":190,"react":172}],187:[function(require,module,exports){
+},{"../actions/MessageActionCreators":182,"../stores/MessageStore":190,"./Button.jsx":185,"react":172}],187:[function(require,module,exports){
 var React = require('react');
 var Button = require('./Button.jsx');
 var MessageActionCreators = require('../actions/MessageActionCreators');
@@ -30580,21 +30610,26 @@ module.exports = new Dispatcher();
 var jQuery = require('jquery');
 var shortid = require('shortid');
 
-function createMessage(message) {
+function createMessage(message, callback) {
+
+	console.log('api message', message);
 
 	// Create message function
+	var data = {
+		id: shortid.generate(),
+		message: message
+	};
+
 	var request = jQuery.ajax({
 		method: 'post',
 		url: 'http://localhost:8080/api/messages',
-		data: {
-			id: shortid.generate(),
-			message: message
-		}
+		data: data
 	});
 
 	request.done(function handleSuccess() {
 		console.log('Success!');
 		console.log('data');
+		callback(data);
 	});
 
 	request.fail(function handleFailure(error) {

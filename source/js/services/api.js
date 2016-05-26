@@ -1,21 +1,26 @@
 var jQuery = require('jquery');
 var shortid = require('shortid');
 
-function createMessage(message) {
+function createMessage(message, callback) {
+
+	console.log('api message', message);
 
 // Create message function
+	var data = {
+			id: shortid.generate(),
+			message: message
+		};
+
 	var request = jQuery.ajax({
 		method: 'post',
 		url: 'http://localhost:8080/api/messages',
-		data: {
-			id: shortid.generate(),
-			message: message
-		}
+		data: data
 	});
 
 	request.done(function handleSuccess(){
 		console.log('Success!');
 		console.log('data');
+		callback(data);
 	});
 
 	request.fail(function handleFailure(error) {

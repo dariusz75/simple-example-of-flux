@@ -7,12 +7,14 @@ var MessageActionCreators = require('../actions/MessageActionCreators');
 var Application = React.createClass({
 
   getInitialState: function () {
+    console.log(MessageStore.getMessage());
     return {
       messageDocument: MessageStore.getMessage()
     };
   },
 
   setMessage: function () {
+    console.log(MessageStore.getMessage());
     this.setState({
       messageDocument: MessageStore.getMessage()
     });
@@ -27,10 +29,17 @@ var Application = React.createClass({
     MessageStore.removeChangeListener(this.setMessage);
   },
 
-  render: function () {
+  render: function () { 
+  
+    if (this.state.messageDocument.message.length === 0) {
+      return <CreateMessage />;
+    }
+
+    return <UpdateMessage />;
+
     return <section className="container">
             <h1>{this.state.messageDocument.message ? this.state.messageDocument.message : 'Please wait... I am getting a message'}</h1>
-            <UpdateMessage />
+            <CreateMessage />
           </section>;
   }
 });
